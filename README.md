@@ -22,6 +22,52 @@ An interactive React frontend visualizes the agent's step-by-step reasoning trac
 
 ---
 
+## 🔄 Agent Workflow
+
+The core of MalWhere is a **ReAct (Reasoning and Action)** loop. Instead of executing a static sequence of analysis scripts, MalWhere passes control to a Large Language Model (LLM) equipped with a suite of analytical tools. The agent dynamically decides what to investigate based on the ongoing findings.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant FastAPI
+    participant LLM_Agent
+    participant Tools
+
+    User->>Frontend: Uploads PE File (.exe/.dll)
+    Frontend->>FastAPI: POST /analyze (Multipart Upload)
+    FastAPI->>Tools: Compute SHA256 Hash
+    FastAPI->>FastAPI: Check SQLite Cache
+    
+    alt Hash exists in Cache
+        FastAPI-->>Frontend: Return Cached Final Report & Visualization
+    else Hash not in Cache
+        loop ReAct Investigation Loop (Max 10 Iterations)
+            FastAPI->>LLM_Agent: Send System Prompt + History
+            LLM_Agent-->>FastAPI: JSON Response (tool_call or final_report)
+            
+            alt tool_call
+                FastAPI->>Tools: Execute Tool (e.g., scan_yara, ml_risk_score)
+                Tools-->>FastAPI: JSON Tool Outcome
+                FastAPI->>Frontend: SSE Stream (Live Thought + Tool Result)
+                FastAPI->>LLM_Agent: Append Tool Outcome to History
+            else final_report
+                FastAPI->>Frontend: SSE Stream (Final Verdict & Confidence)
+            end
+        end
+        FastAPI->>FastAPI: Cache Full Report in SQLite
+    end
+```
+
+### Typical Investigation Sequence:
+1. **Initial Metadata Extraction**: The agent always starts by calling `get_pe_info` to retrieve the file hashes, sections, and compilation timestamps.
+2. **Threat Intelligence Triaging**: The agent calls `hash_lookup` with the SHA256 hash. If it receives a significant number of detections from VirusTotal or MalwareBazaar, it immediately pivots to `threat_intel_lookup` to pull AlienVault OTX/ThreatFox campaign details.
+3. **Deep Static Analysis**: The agent calls `visualize_pe` to construct the binary visualization. It then sequentially executes a battery of static tools (`analyze_imports`, `scan_section_entropy`, `extract_strings`, `scan_yara`) to uncover embedded IOCs, packed sections, or malicious capabilities.
+4. **Machine Learning Verification**: The agent runs the binary through the `ml_risk_score` tool, utilizing the pre-trained EMBER LightGBM model to acquire an empirical probability score of maliciousness.
+5. **Synthesis**: The agent aggregates all the gathered evidence, formulates a conclusive summary, and issues the `final_report`.
+
+---
+
 ## 🏗️ Architecture
 
 ```
