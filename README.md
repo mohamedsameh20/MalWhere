@@ -70,6 +70,42 @@ sequenceDiagram
 
 ## 🏗️ Architecture
 
+```mermaid
+flowchart TD
+    subgraph Frontend[React Frontend]
+        UI[Web UI Dashboard]
+        Upload[PE File Dropzone]
+        Trace[Live ReAct Trace]
+    end
+
+    subgraph Backend[FastAPI Orchestrator]
+        API[REST API & SSE]
+        Cache[(SQLite Cache)]
+        Agent[ReAct Logic Loop]
+    end
+
+    subgraph Tools[Analysis Engine]
+        ML[EMBER LightGBM]
+        YARA[YARA Scanner]
+        Static[PE & String Parsers]
+        Visual[Grayscale Visualizer]
+    end
+
+    subgraph External[External Dependencies]
+        LLM[LFM/Gemma LLM Server]
+        TI[Threat Intel APIs]
+    end
+
+    Upload -->|POST /analyze| API
+    API <-->|Check/Store Hash| Cache
+    API <-->|Context & Prompts| Agent
+    Agent <-->|Execute| Tools
+    Agent <-->|JSON Completion| LLM
+    Tools <-->|Lookups| TI
+    API -->|SSE Events| Trace
+```
+
+### Directory Layout
 ```
 MalWhere/
 ├── agent/             # LLM ReAct orchestrator and prompt templates
