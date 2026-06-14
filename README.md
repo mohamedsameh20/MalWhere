@@ -41,7 +41,6 @@ Here is the glassmorphic React dashboard displaying the analysis pipeline in act
 The core of MalWhere is a **ReAct (Reasoning and Action)** loop. Instead of executing a static sequence of analysis scripts, MalWhere passes control to a Large Language Model (LLM) equipped with a suite of analytical tools. The agent dynamically decides what to investigate based on the ongoing findings.
 
 ```mermaid
-%%{init: { 'theme': 'base', 'themeVariables': { 'primaryColor': '#f1f5f9', 'edgeColor': '#475569', 'actorBkg': '#ffffff', 'actorBorder': '#cbd5e1', 'lineColor': '#94a3b8', 'signalColor': '#0f172a', 'signalTextColor': '#0f172a', 'labelTextColor': '#0f172a', 'actorTextColor': '#0f172a' } }}%%
 sequenceDiagram
     participant User
     participant Frontend
@@ -86,7 +85,6 @@ sequenceDiagram
 ## 🏗️ Architecture
 
 ```mermaid
-%%{init: { 'theme': 'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f8fafc', 'primaryTextColor': '#0f172a', 'lineColor': '#64748b', 'nodeBorder': '#cbd5e1', 'edgeLabelBackground': '#ffffff' } }}%%
 flowchart TD
     subgraph Frontend[React Frontend]
         UI[Web UI Dashboard]
