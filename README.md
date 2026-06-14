@@ -22,11 +22,26 @@ An interactive React frontend visualizes the agent's step-by-step reasoning trac
 
 ---
 
+## 📸 User Interface
+
+Here is the glassmorphic React dashboard displaying the analysis pipeline in action:
+
+| 1. File Upload Dropzone (Idle) | 2. Analysis Complete Verdict |
+| :---: | :---: |
+| ![File Upload Dashboard](docs/images/dashboard_idle.png) | ![Analysis Verdict](docs/images/analysis_complete.png) |
+
+| 3. Step-by-Step Live Agent Trace |
+| :---: |
+| ![Agent Trace](docs/images/analysis_steps.png) |
+
+---
+
 ## 🔄 Agent Workflow
 
 The core of MalWhere is a **ReAct (Reasoning and Action)** loop. Instead of executing a static sequence of analysis scripts, MalWhere passes control to a Large Language Model (LLM) equipped with a suite of analytical tools. The agent dynamically decides what to investigate based on the ongoing findings.
 
 ```mermaid
+%%{init: { 'theme': 'base', 'themeVariables': { 'primaryColor': '#f1f5f9', 'edgeColor': '#475569', 'actorBkg': '#ffffff', 'actorBorder': '#cbd5e1', 'lineColor': '#94a3b8', 'signalColor': '#0f172a', 'signalTextColor': '#0f172a', 'labelTextColor': '#0f172a', 'actorTextColor': '#0f172a' } }}%%
 sequenceDiagram
     participant User
     participant Frontend
@@ -71,6 +86,7 @@ sequenceDiagram
 ## 🏗️ Architecture
 
 ```mermaid
+%%{init: { 'theme': 'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f8fafc', 'primaryTextColor': '#0f172a', 'lineColor': '#64748b', 'nodeBorder': '#cbd5e1', 'edgeLabelBackground': '#ffffff' } }}%%
 flowchart TD
     subgraph Frontend[React Frontend]
         UI[Web UI Dashboard]
